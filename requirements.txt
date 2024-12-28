@@ -1,0 +1,9 @@
+streamlit
+yfinance
+pandas
+openpyxl
+praw
+google-generativeai
+requests
+python-dotenv
+plotly
