@@ -8,3 +8,4 @@ requests
 python-dotenv
 plotly
 newsapi-python
+textblob
