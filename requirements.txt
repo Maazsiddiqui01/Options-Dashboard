@@ -1,16 +1,16 @@
 requests
 datetime
-pandas as pd
-plotly.express as px
-yfinance as yf
+pandas
+plotly.express
+yfinance
 requests
 openpyxl
 praw
 datetime import datetime, timedelta
 newsapi import NewsApiClient
-plotly.graph_objects as go
-seaborn as sns
-matplotlib.pyplot as plt
-google.generativeai as genai  # Gemini Integration
+plotly.graph_objects
+seaborn
+matplotlib.pyplot
+google.generativeai
 textblob import TextBlob
-streamlit.components.v1 as components
+streamlit.components.v1
