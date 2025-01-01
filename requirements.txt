@@ -7,7 +7,7 @@ openpyxl
 praw
 newsapi
 seaborn
-matplotlib.pyplot
-google.generativeai
+matplotlib
+google
 textblob
-streamlit.components.v1
+streamlit
