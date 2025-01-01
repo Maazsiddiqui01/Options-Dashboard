@@ -12,3 +12,4 @@ google-generativeai
 textblob
 streamlit
 newsapi-python
+time

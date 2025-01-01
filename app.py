@@ -15,6 +15,7 @@ import matplotlib.pyplot as plt
 import google.generativeai as genai  # Gemini Integration
 from textblob import TextBlob
 import streamlit.components.v1 as components
+import time
 
 
 # --- API Keys ---
