@@ -6,11 +6,11 @@ yfinance
 requests
 openpyxl
 praw
-datetime import datetime, timedelta
-newsapi import NewsApiClient
+datetime
+newsapi
 plotly.graph_objects
 seaborn
 matplotlib.pyplot
 google.generativeai
-textblob import TextBlob
+textblob
 streamlit.components.v1
