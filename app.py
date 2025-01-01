@@ -18,6 +18,7 @@ import streamlit.components.v1 as components
 
 
 # --- API Keys ---
+model = genai.GenerativeModel('gemini-1.5-flash')
 GENAI_API_KEY = "AIzaSyAXukbX28-gUndSdFOOGSU9d5SQ5FzxIFc"
 NEWSAPI_KEY = "f8d7120cc5fb44a0ae8e9a2ba56df18a"
 reddit = praw.Reddit(
@@ -39,14 +40,14 @@ st.set_page_config(page_title="Analysis Dashboard", layout="wide")
 st.sidebar.header("Filters")
 selected_stock = st.sidebar.text_input("Enter Stock Ticker", value='TSLA')
 strike_price = st.sidebar.number_input("Select Strike Price", value=450)
-show_options = st.sidebar.checkbox("Show Option Chain Data", value=True)
-show_news = st.sidebar.checkbox("Show Latest News", value=True)
-show_ai_query = st.sidebar.checkbox("Enable AI Analysis (Gemini)", value=True)
 timeframe = st.sidebar.selectbox("Select Timeframe", [ "day","minute", "hour", "week", "month"])
 show_rsi = st.sidebar.checkbox("Show RSI Indicator", value=True)
 show_sma = st.sidebar.checkbox("Show Moving Average (SMA)", value=True)
 show_ema = st.sidebar.checkbox("Show Exponential MA (EMA)", value=True)
 show_bollinger = st.sidebar.checkbox("Show Bollinger Bands", value=True)
+show_options = st.sidebar.checkbox("Show Option Chain Data", value=True)
+show_news = st.sidebar.checkbox("Show Latest News", value=True)
+show_ai_query = st.sidebar.checkbox("Enable AI Analysis (Gemini)", value=True)
 
 ticker = selected_stock
 
@@ -77,7 +78,25 @@ def tradingview_heatmap_html():
     </div>
     """
 
-
+# Function to Embed Financials Widget
+def tradingview_financials_widget(symbol):
+    return f"""
+    <div class="tradingview-widget-container">
+      <div class="tradingview-widget-container__widget"></div>
+      <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-financials.js" async>
+      {{
+      "isTransparent": false,
+      "largeChartUrl": "",
+      "displayMode": "regular",
+      "width": "100%",
+      "height": 600,
+      "colorTheme": "dark",
+      "symbol": "{symbol}",
+      "locale": "en"
+      }}
+      </script>
+    </div>
+    """
 
 
 def tradingview_screener():
@@ -447,7 +466,40 @@ for idx, (tf, label) in enumerate(zip(timeframes, time_labels)):
             )
             st.warning(f"No data available for {label}")
     
-    
+st.title(f"📊 Technical Buy/Sell for {selected_stock}")
+# Function to Generate Widget HTML for Different Intervals
+def tradingview_widget_html(symbol, interval):
+    return f"""
+    <div class="tradingview-widget-container">
+      <div class="tradingview-widget-container__widget"></div>
+      <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
+      {{
+      "interval": "{interval}",
+      "width": "100%",
+      "isTransparent": false,
+      "height": "380",
+      "symbol": "{symbol}",
+      "showIntervalTabs": true,
+      "displayMode": "single",
+      "locale": "en",
+      "colorTheme": "dark"
+      }}
+      </script>
+    </div>
+    """
+
+# Define Ticker and Intervals
+intervals = ["1m", "1h", "1D", "1W"]
+labels = ["1 Min", "1 Hour", "1 Day", "1 Week"]
+
+# Create 5 Columns
+columns = st.columns(4)
+
+# Embed Widgets in Each Column
+for col, interval, label in zip(columns, intervals, labels):
+    with col:
+        st.subheader(label)
+        components.html(tradingview_widget_html(ticker, interval), height=450)      
     
     
 # --- Streamlit Layout FROM TRADING VIEW ---
@@ -457,8 +509,8 @@ with col1:
     mini_chart_widget(ticker=f"PYTH:{ticker}")
 
 with col2:
-    st.subheader(f"📊 Technical Buy/Sell for {selected_stock}")
-    st.markdown(get_tradingview_widget(f"NASDAQ:{ticker}"), unsafe_allow_html=True)
+    st.subheader(f" Fundamentals for {selected_stock}")
+    components.html(tradingview_financials_widget(ticker), height=400)
 
 with col3:
     st.subheader("Stock Heatmap Widget")
@@ -611,6 +663,16 @@ if show_news:
     for article in news[:5]:
         st.markdown(f"[{article['title']}]({article['url']}) - {article['source']['name']}")
 
+
+# ======== Reddit Sentiment ========
+st.subheader("Reddit Sentiment")
+posts = reddit.subreddit('stocks').search(selected_stock, limit=5)
+for post in posts:
+    sentiment_score = TextBlob(post.title).sentiment.polarity
+    sentiment = "Positive" if sentiment_score > 0 else "Negative" if sentiment_score < 0 else "Neutral"
+    st.write(f"[{post.title}]({post.url}) - Sentiment: {sentiment}")        
+
+# ======== AI Query for Real-Time Insights ========
 user_query = st.text_input("Ask about real-time stock trends, performance, or news")
 if user_query:
     def ai_query(prompt):
@@ -620,18 +682,10 @@ if user_query:
     query_result = ai_query(user_query)
     st.subheader("AI Query Results")
     st.write(query_result)
-
-        
-# ======== Reddit Sentiment ========
-st.subheader("Reddit Sentiment")
-posts = reddit.subreddit('stocks').search(selected_stock, limit=5)
-for post in posts:
-    sentiment_score = TextBlob(post.title).sentiment.polarity
-    sentiment = "Positive" if sentiment_score > 0 else "Negative" if sentiment_score < 0 else "Neutral"
-    st.write(f"[{post.title}]({post.url}) - Sentiment: {sentiment}")        
+            
     
 # --- Footer ---
 st.markdown(
-    "<div style='text-align:center;margin-top:20px;'>Data powered by <b>TradingView</b> and <b>Polygon.io</b></div>",
+    "<div style='text-align:center;margin-top:20px;'>Data powered by <b>TradingView</b> and <b>Polygon.io</b>. Created by <b>Maaz Siddiqui</b></div>",
     unsafe_allow_html=True
 )
