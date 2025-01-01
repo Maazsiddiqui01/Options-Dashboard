@@ -11,4 +11,4 @@ matplotlib
 google
 textblob
 streamlit
-newsapi
+newsapi-python
