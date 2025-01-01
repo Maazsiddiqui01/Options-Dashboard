@@ -1,11 +1,16 @@
-streamlit
-yfinance
-pandas
+requests
+datetime
+pandas as pd
+plotly.express as px
+yfinance as yf
+requests
 openpyxl
 praw
-google-generativeai
-requests
-python-dotenv
-plotly
-newsapi-python
-textblob
+datetime import datetime, timedelta
+newsapi import NewsApiClient
+plotly.graph_objects as go
+seaborn as sns
+matplotlib.pyplot as plt
+google.generativeai as genai  # Gemini Integration
+textblob import TextBlob
+streamlit.components.v1 as components
