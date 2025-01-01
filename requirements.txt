@@ -1,14 +1,11 @@
 requests
 datetime
 pandas
-plotly.express
+plotly
 yfinance
-requests
 openpyxl
 praw
-datetime
 newsapi
-plotly.graph_objects
 seaborn
 matplotlib.pyplot
 google.generativeai
