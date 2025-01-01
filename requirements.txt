@@ -8,7 +8,7 @@ praw
 newsapi
 seaborn
 matplotlib
-google
+google-generativeai
 textblob
 streamlit
 newsapi-python
